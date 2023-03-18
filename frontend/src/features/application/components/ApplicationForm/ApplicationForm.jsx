@@ -1,29 +1,34 @@
-import applicationStyles from './Application.module.css'
+import applicationStyles from '../../../../pages/application/Application.module.css'
 import formStyles from './ApplicationForm.module.css'
 import { Form, Input, Button, Select, DatePicker } from 'antd'
-import { useState, useRef } from 'react'
-import { MaskedInput } from 'antd-mask-input'
-import { Row, Col } from 'antd'
-import InputMask from 'react-input-mask'
+import { useRef, useEffect } from 'react'
+
+import IMask from 'imask'
+
+import {STATUS_DICT} from "../../../../constants";
+import { useSelector, useDispatch } from 'react-redux';
+import {getCountries} from "../../applicationSlice";
+const maskOptions = {
+    mask: '+{7}(000)000-00-00'
+};
 
 function ApplicationForm() {
-  let [phoneNumber, setPhoneNumber] = useState()
-
-  const formInputRef = useRef(null)
-
-  console.log(formInputRef)
-
-  const onFinish = values => {
+    const dispatch = useDispatch();
+    const countries = useSelector((state) => state.default.application.countries);
+    const formInputRef = useRef(null);
+    const onFinish = values => {
     console.log(values)
-    console.log({ ...values, phone: phoneNumber })
   }
 
-  // useEffect(() => {
-  //   if (formInputRef.current) {
-  //     console.log(123)
-  //     IMask(formInputRef.current, maskOptions)
-  //   }
-  // }, [formInputRef.current])
+  useEffect(() => {
+      dispatch(getCountries());
+  }, [dispatch])
+
+   useEffect(() => {
+     if (formInputRef.current) {
+       IMask(formInputRef.current.input, maskOptions)
+     }
+   }, [formInputRef.current, maskOptions])
 
   return (
     <>
@@ -49,21 +54,12 @@ function ApplicationForm() {
             <Select.Option value='female'>Женский</Select.Option>
           </Select>
         </Form.Item>
-
         <Form.Item name='phone'>
-          <MaskedInput
-            onChange={({ unmaskedValue }) => {
-              setPhoneNumber(unmaskedValue)
-              return unmaskedValue
-            }}
-            placeholder='Номер телефона'
-            mask={
-              //  https://imask.js.org/guide.html#masked-pattern
-              '+7(000)000-00-00'
-            }
-          />
+            <Input placeholder='Телефон' ref={formInputRef}  />
         </Form.Item>
-
+        <Form.Item name='country'>
+          <Select options={countries.data} loading={countries.status === STATUS_DICT.PENDING} placeholder='Страна'  />
+        </Form.Item>
         <Button type='primary' htmlType='submit'>
           Submit
         </Button>

@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import Navbar from './Navbar'
+import React, { useState} from 'react'
+import Navbar from '../../layout/NavBar/Navbar'
 import styles from './Application.module.css'
-import ApplicationForm from './ApplicationForm'
-import ApplicationQuestions from './ApplicationQuestions'
+import ApplicationForm from '../../features/application/components/ApplicationForm/ApplicationForm'
+import ApplicationQuestions from '../../features/application/components/ApplicationQuestions/ApplicationQuestions'
 import { Col, Row } from 'antd'
 
 function Application() {
+
   const [show, setShow] = useState({ applicationForm: true, applicationQuestions: false })
   const onQuestionSelect = () => setShow({ applicationForm: false, applicationQuestions: true })
   const onApplicationSelect = () => setShow({ applicationForm: true, applicationQuestions: false })
